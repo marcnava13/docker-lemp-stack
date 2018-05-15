@@ -1,6 +1,6 @@
 ## Docker LEMP STACK
 
-Run Nginx, PHP 7 and Mysql using [Docker]
+Run Nginx, PHP-FPM, Mysql and MailDev using [Docker]
 
 ### Requirements
 Install [Docker] and [Compose]
@@ -13,16 +13,16 @@ First, clone this repository:
 $ git clone git@github.com:marcnava13/docker-lemp-stack.git
 ```
 
-Change the password for the database from .env file that you'll find in the root project:
+Enter folder inside your repository cloned, create and configure .env file
 
 ```bash
-MYSQL_ROOT_PASSWORD=supersecret
+cp env-sample .env
 ```
 
 Then, run:
 
 ```bash
-$ docker-compose up
+$ docker-compose up -d
 ```
 
 You are done, you can visit your application on the following URL: `http://localhost`

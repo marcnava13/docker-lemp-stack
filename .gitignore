@@ -3,3 +3,7 @@
 *.pem
 *.crt
 *.csr
+
+.env
+logs/
+!.gitkeep
