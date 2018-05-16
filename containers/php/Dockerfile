@@ -1,5 +1,3 @@
-# see https://github.com/cmaessen/docker-php-sendmail for more information
-
 ARG PHP_VERSION=${PHP_VERSION}
 
 FROM php:${PHP_VERSION}-fpm

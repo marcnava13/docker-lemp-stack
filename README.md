@@ -7,16 +7,22 @@ Install [Docker] and [Compose]
 
 ### Installation
 
-First, clone this repository:
+First, in your project clone this repository as submodule:
 
 ```bash
-$ git clone git@github.com:marcnava13/docker-lemp-stack.git
+$ git submodule add git@github.com:marcnava13/docker-lemp-stack.git
 ```
 
 Enter folder inside your repository cloned, create and configure .env file
 
 ```bash
 cp env-sample .env
+```
+
+Indicate the path where your source code is located. Assign a value to the **APP_CODE_PATH_HOST**, by default values is **../**
+
+```bash
+APP_CODE_PATH_HOST=YOUR_PATH
 ```
 
 Then, run:

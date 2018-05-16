@@ -7,7 +7,7 @@ services:
       - ${NGINX_HOST_HTTP_PORT}:80
       - ${NGINX_HOST_HTTPS_PORT}:433
     volumes:
-      - ${APP_CODE_PATH_HOST}:/www
+      - ${APP_CODE_PATH_HOST}:/var/www/html
       - ./containers/nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./logs/nginx:/var/log/nginx
     links:
@@ -21,7 +21,7 @@ services:
     container_name: php-fpm
     volumes: 
       - ./containers/php/php.ini:/usr/local/etc/php/php.ini
-      - ${APP_CODE_PATH_HOST}:/www
+      - ${APP_CODE_PATH_HOST}:/var/www/html
     links:
       - mysql
       - maildev
