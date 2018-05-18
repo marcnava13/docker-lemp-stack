@@ -1,5 +1,20 @@
 version: '3'
 services:
+  workspace:
+    build:
+      context: ./containers/workspace
+    container_name: workspace
+    ports:
+      - "${WORKSPACE_SSH_PORT}:22"
+    tty: true
+    volumes:
+      - ${APP_CODE_PATH_HOST}:/var/www/html
+    links:
+      - nginx
+      - php-fpm
+      - mysql
+      - maildev
+
   nginx:
     image: nginx:${NGINX_VERSION}
     container_name: nginx
