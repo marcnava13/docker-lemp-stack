@@ -1,15 +1,23 @@
-version: '3'
+version: '3.1'
+
+# networks:
+
+# volumes:
+
 services:
   workspace:
     build:
-      context: ./containers/workspace
+      context: ./workspace
+      args:
+        - PHP_VERSION=${PHP_VERSION}
     container_name: workspace
+    restart: always
     ports:
-      - "${WORKSPACE_SSH_PORT}:22"
+      - ${SSH_PORT}:22
     tty: true
     volumes:
-      - ${APP_CODE_PATH_HOST}:/var/www/html
-    links:
+      - ${APP_PATH}:/var/www/html
+    depends_on:
       - nginx
       - php-fpm
       - mysql
@@ -18,39 +26,50 @@ services:
   nginx:
     image: nginx:${NGINX_VERSION}
     container_name: nginx
+    restart: always
     ports:
       - ${NGINX_HOST_HTTP_PORT}:80
       - ${NGINX_HOST_HTTPS_PORT}:433
     volumes:
-      - ${APP_CODE_PATH_HOST}:/var/www/html
-      - ./containers/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./logs/nginx:/var/log/nginx
-    links:
+      - ${APP_PATH}:/var/www/html
+      - ./workspace/etc/nginx/sites-available:/etc/nginx/conf.d
+      - ./workspace/logs/nginx:/var/log/nginx
+    depends_on:
       - php-fpm
 
   php-fpm:
     build: 
-      context: ./containers/php
+      context: ./workspace/etc/php-fpm
       args:
         - PHP_VERSION=${PHP_VERSION}
     container_name: php-fpm
     volumes: 
-      - ./containers/php/php.ini:/usr/local/etc/php/php.ini
-      - ${APP_CODE_PATH_HOST}:/var/www/html
-    links:
+      # - ./workspace/etc/php-fpm/php.ini:/usr/local/etc/php/php.ini
+      - ${APP_PATH}:/var/www/html
+    depends_on:
       - mysql
       - maildev
 
   mysql:
     image: mysql:${MYSQL_VERSION}
     container_name: mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - TZ=${LOCALE_TIMEZONE}
+      # - MYSQL_DATABASE=${MYSQL_DATABASE}
+      # - MYSQL_USER=${MYSQL_USER}
+      # - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      # - MYSQL_ALLOW_EMPTY_PASSWORD=${MYSQL_ALLOW_EMPTY_PASSWORD}
+      # - MYSQL_RANDOM_ROOT_PASSWORD=${MYSQL_RANDOM_ROOT_PASSWORD}
+      # - MYSQL_ONETIME_PASSWORD=${MYSQL_ONETIME_PASSWORD}
+    # volumes:
+      # - ${DATA_PATH_HOST}/mysql:/var/lib/mysql
+      # - ${MYSQL_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
+      # - ./etc/mysql:/var/lib/mysql
+      # - ${MYSQL_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
     ports:
       - ${MYSQL_PORT}:3306
-    environment: 
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
 
   maildev:
     image: djfarrelly/maildev
@@ -58,4 +77,4 @@ services:
     ports:
       - ${MAILDEV_HTTP_PORT}:80
       - ${MAILDEV_SMTP_PORT}:25
-  
+
